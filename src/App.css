@@ -1,38 +1,105 @@
-.App {
-  text-align: center;
+@import url("https://rsms.me/inter/inter.css");
+
+* {
+  box-sizing: border-box;
 }
 
-.App-logo {
-  height: 40vmin;
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: inter;
+}
+
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.canvas {
   pointer-events: none;
+  position: fixed !important;
+  top: 0px;
+  left: 0px;
+  width: 100vw !important;
+  height: 100vh !important;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+.text {
+  line-height: 1em;
+  text-align: left;
+  font-size: 8em;
+  word-break: break-word;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes scaleAnim {
+  0% {
+    transform: scale(0.3, 0.7);
+  }
+  50% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0.3, 0.7);
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+@keyframes translateXAnim {
+  0% {
+    transform: translate3d(-100px, 0, 0);
+  }
+  25% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(100px, 0, 0);
+  }
+  75% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-100px, 0, 0);
+  }
 }
 
-.App-link {
-  color: #61dafb;
+@keyframes translateYAnim {
+  0% {
+    transform: translate3d(0, -100px, 0);
+  }
+  25% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, 100px, 0);
+  }
+  75% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, -100px, 0);
+  }
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.scale {
+  animation: scaleAnim 4s ease-in-out 0s infinite;
+}
+
+.translateX {
+  animation: translateXAnim 4s ease-in-out 0s infinite;
+}
+
+.translateY {
+  animation: translateYAnim 4s ease-in-out 0s infinite;
 }
