@@ -9,12 +9,13 @@ const VideoWobbleMaterial = shaderMaterial(
   {
     uTime: 0,
     color: new THREE.Color(0.2, 0.0, 0.1),
-    uRes: new THREE.Vector2(window.innerWidth, window.innerHeight),
+    uRes: new THREE.Vector2(),
     uMap: new THREE.Texture(),
-    uMouse: new THREE.Vector2(),
+    uMouse: new THREE.Vector2(0,0),
     intersection: new THREE.Vector3(),
-    uHover: new THREE.TextureLoader().load("/flower.jpg"),
+    uPr: window.devicePixelRatio.toFixed(1)
   },
+
   // vertex shader
   glsl`
     varying vec2 vUv;
@@ -37,14 +38,14 @@ const VideoWobbleMaterial = shaderMaterial(
     uniform vec2 uMouse;
     uniform vec3 intersection;
     uniform vec2 uRes;
-    uniform sampler2D uHover;
+    uniform float uPr;
     float circle(in vec2 _st, in float _radius, in float blurriness){
         vec2 dist = _st;
         return 1.-smoothstep(_radius-(_radius*blurriness), _radius+(_radius*blurriness), dot(dist,dist)*4.0);
     }
 
     void main() {
-        vec2 res = uRes;
+        vec2 res = uRes * uPr;
 
         vec2 st = gl_FragCoord.xy / res.xy - vec2(0.5);
 	    // tip: use the following formula to keep the good ratio of your coordinates
@@ -52,19 +53,17 @@ const VideoWobbleMaterial = shaderMaterial(
 
         vec2 mouse = uMouse * -0.5;
         mouse.y *= uRes.y / uRes.x;
-        mouse.x *= uRes.y / uRes.x;
+        // mouse.x *= uRes.y / uRes.x;
         // mouse *= -1.;
         vec2 circlePos = st + mouse;
-        float c = circle(circlePos, .03, 2.) * 2.5;
+        float c = circle(circlePos, .2, 1.) * 2.5;
         
             float offx = vUv.x + sin(vUv.y + uTime * .1);
-            float offy = vUv.y - uTime * 0.1 - cos(uTime * .001) * .01;
+            float offy = vUv.y - uTime * 0.1 - cos(uTime * .001) * 1.;
             float n = snoise3(vec3(offx, offy, uTime * .1) * 8.) - 1.;
 
-            vec4 txtr = texture2D(uMap, vUv);
-            vec4 hover = texture2D(uHover, vUv);
+            vec4 txtr = vec4(texture2D(uMap, vUv).rgb, 1.);
 
-          gl_FragColor = vec4(txtr.rgb, txtr.a);
           float mask = smoothstep(0.4,0.5, n + pow(c, 2.));
           gl_FragColor = mix(vec4(1.,1.,1.,1.), txtr, mask);
         
@@ -76,29 +75,25 @@ extend({ VideoWobbleMaterial });
 
 const ShaderObject = () => {
   //   const [mouse, setMouse] = useState();
-  let mouse = {};
-  const { gl } = useThree((smth) => smth);
   const view = document.getElementById("view1");
   const domRect = view.getBoundingClientRect();
 
   const objRef = useRef();
   const [video] = useState(() =>
     Object.assign(document.createElement("video"), {
-      src: "/whiteblob.mp4",
+      src: "/turtle.mp4",
       crossOrigin: "Anonymous",
-      // loop: true,
+      loop: true,
       muted: true,
       playsInline: true,
     })
   );
-  useFrame(({ clock }) => {
+  useFrame(({ clock, gl }) => {
     objRef.current.uTime = clock.getElapsedTime();
   });
   const handleMouseMove = (e) => {
     // objRef.current.uMouse = e.uv;
     objRef.current.uMouse = e.pointer;
-
-    console.log(objRef.current.uMouse);
   };
   video.play();
   const vidTexture = new THREE.VideoTexture(video);
@@ -106,7 +101,7 @@ const ShaderObject = () => {
   return (
     <mesh scale={scale} onPointerMove={(e) => handleMouseMove(e)}>
       <planeBufferGeometry args={[1, 1, 100, 100]} />
-      <videoWobbleMaterial uMap={vidTexture} ref={objRef} />
+      <videoWobbleMaterial uMap={vidTexture} ref={objRef} uRes={new THREE.Vector2(domRect.width , domRect.height )}/>
     </mesh>
   );
 };

@@ -18,20 +18,12 @@ import {
   Heading,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
-
-const Links = ["Dashboard", "Projects", "Team"];
+import { useLocation } from "wouter";
+import useStore from "./customHooks/useStore";
+const Links = ["About", "Projects", "Contact"];
 
 const NavLink = ({ children }) => (
-  <Link
-    px={2}
-    py={1}
-    rounded={"md"}
-    _hover={{
-      textDecoration: "none",
-      bg: useColorModeValue("gray.200", "gray.700"),
-    }}
-    href={"#"}
-  >
+  <Link px={2} py={1} rounded={"md"} href={"#"}>
     <Heading fontSize={"xl"} fontWeight={"normal"}>
       {children}
     </Heading>
@@ -40,10 +32,11 @@ const NavLink = ({ children }) => (
 
 export default function WithAction() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const [location, setLocation] = useLocation();
+  const setActiveRef = useStore((state) => state.setActiveRef);
   return (
     <>
-      <Box bg={useColorModeValue("light.bg", "dark.bg")} px={4} py={8}>
+      <Box bg={"transparent"} pb={6}>
         <Flex
           h={16}
           alignItems={"center"}
@@ -64,7 +57,17 @@ export default function WithAction() {
             alignItems={"center"}
             justifyContent={{ base: "flex-end", md: "space-between" }}
           >
-            <Heading fontSize={"2xl"}>hjopel.at</Heading>
+            <Link
+              px={2}
+              py={1}
+              rounded={"md"}
+              onClick={() => {
+                setActiveRef(undefined)
+                setLocation("/");
+              }}
+            >
+              <Heading fontSize={"2xl"}>hjopel</Heading>
+            </Link>
             <HStack
               as={"nav"}
               spacing={4}
