@@ -34,7 +34,9 @@ function App() {
   const activeRef = useStore((state) => state.activeRef);
   return (
     <>
-      <ChakraFlex w="100%" h="60vh" display={"flex"} variants={variants} animate={activeRef ? "else" : "lp"} >
+      <ChakraFlex w="100%" h="60vh" display={"flex"} variants={variants} 
+      // animate={activeRef ? "else" : "lp"} 
+      >
         <Flex
           w="100%"
           h="100%"

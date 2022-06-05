@@ -114,9 +114,9 @@ const ProjectScene = forwardRef((props, ref) => {
         "<"
       )
       // .to(matRef.current, {uAlpha: 0, duration: 2}, "<")
-      .add(() => {
-        setLocation("/projects/hjopel");
-      }, ">");
+      // .add(() => {
+      //   setLocation("/projects/hjopel");
+      // }, ">");
   });
   let ar = 1;
   let top = 0,
@@ -126,9 +126,9 @@ const ProjectScene = forwardRef((props, ref) => {
   if (ref && ref.current) {
     // const parentRect = ref.current.getBoundingClientRect();
     const parentRect = ref.current.getBoundingClientRect();
-    const canvasRect = document.getElementById("canvasEl").getBoundingClientRect()
-    console.log(parentRect)
-    console.log(rect)
+    const canvasRect = document
+      .getElementById("canvasEl")
+      .getBoundingClientRect();
     // const parentRect = document.getElementById("finalView").getBoundingClientRect()
     // parentRect.width *= 1.6;
     // parentRect.width *= 1.6;
@@ -137,7 +137,7 @@ const ProjectScene = forwardRef((props, ref) => {
     } else {
       ar = rect.width / parentRect.width;
     }
-    const leftPct = ((rect.x - parentRect.x) + rect.width / 2) / parentRect.width;
+    const leftPct = (rect.x - parentRect.x + rect.width / 2) / parentRect.width;
     left = leftPct * viewport.width - viewport.width / 2;
 
     const topPct = (rect.y + rect.height / 2) / parentRect.height;
@@ -147,21 +147,14 @@ const ProjectScene = forwardRef((props, ref) => {
   }
 
   const scale = useAspect(activeRef.width, activeRef.height, ar * 0.3);
-  const finalScale = useAspect(
-    activeRef.width ,
-    activeRef.height ,
-    1
-  );
+  const finalScale = useAspect(activeRef.width, activeRef.height, 1);
 
   return (
     <>
       <ambientLight intensity={1} />
       <mesh scale={scale} ref={meshRef} position={[left, top, 0]}>
         <planeBufferGeometry />
-        <projectsMaterial
-          ref={matRef}
-          uMap={activeRef.txtr}
-        />
+        <projectsMaterial ref={matRef} uMap={activeRef.txtr} />
       </mesh>
     </>
   );

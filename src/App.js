@@ -132,13 +132,11 @@ function App() {
             {/* <layoutCamera /> */}
             {/* <LayoutCamera /> */}
             <Suspense fallback={null}>
-              {!activeRef && (
-                <View track={view1}>
-                  <Scene />
-                </View>
-              )}
+              <View track={view1}>
+                <Scene />
+              </View>
 
-              {activeRef && (
+              {false && (
                 <View track={view3}>
                   <ProjectScene ref={view3} />
                   {/* ref not used as a traditional ref, but as a target */}

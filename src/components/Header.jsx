@@ -63,7 +63,7 @@ export default function WithAction() {
               rounded={"md"}
               onClick={() => {
                 setActiveRef(undefined);
-                setLocation("/");
+                // setLocation("/");
               }}
             >
               <Heading fontSize={"2xl"}>hjopel</Heading>

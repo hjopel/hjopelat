@@ -1,4 +1,4 @@
-import { forwardRef, useRef } from "react";
+import { forwardRef, useRef, useState } from "react";
 import {
   Box,
   Heading,
@@ -16,6 +16,7 @@ import Card from "./Projects/Card";
 import useStore from "./customHooks/useStore";
 import { useLocation, useRoute } from "wouter";
 import { ChakraFlex, MotionGrid, MotionGridItem } from "./AnimatedComponents";
+import { AnimatePresence, AnimateSharedLayout, motion } from "framer-motion";
 const Projects = forwardRef(({ target }, ref) => {
   const setActiveRef = useStore((state) => state.setActiveRef);
   const activeRef = useStore((state) => state.activeRef);
@@ -81,45 +82,73 @@ const Projects = forwardRef(({ target }, ref) => {
         alignItems={"center"}
         ref={ref}
       >
-        <MotionGrid
-          width={"100%"}
-          h="90%"
-          templateColumns={{ base: "repeat(1, 1fr)", lg: "repeat(3, 1fr)" }}
-          gap={{ lg: 6 }}
-          gridAutoRows={{ lg: "50%" }}
-          justifyContent={"center"}
-        >
-          {imgs.map((img, idx) => {
-            return (
-              <MotionGridItem
-                w="100%"
-                key={img.src}
-                h="100%"
-                onClick={() => {
-                  setActiveRef({
-                    ...img,
-                    rect: img.ref.current.getBoundingClientRect(),
-                  });
-                }}
-                pointerEvents={activeRef ? "none" : "initial"}
-                variants={variants}
-                animate={activeRef ? "hide" : "show"}
-              >
-                <Card
-                  key={img.src}
-                  src={img.src}
-                  title={img.title}
-                  category={img.category}
-                  tags={img.tags}
-                  ref={img.ref}
-                />
-              </MotionGridItem>
-            );
-          })}
-        </MotionGrid>
+        <AnimateSharedLayout>
+          <MotionGrid
+            width={"100%"}
+            h="90%"
+            templateColumns={{ base: "repeat(1, 1fr)", lg: "repeat(3, 1fr)" }}
+            gap={{ lg: 6 }}
+            gridAutoRows={{ lg: "50%" }}
+            justifyContent={"center"}
+            layout
+          >
+            {imgs.map((img, idx) => (
+              <ProjectCard img={img} />
+            ))}
+          </MotionGrid>
+        </AnimateSharedLayout>
       </ChakraFlex>
     </ChakraFlex>
   );
 });
 
+const ProjectCard = ({ img }) => {
+  const setActiveRef = useStore((state) => state.setActiveRef);
+
+  const [isOpen, setIsOpen] = useState(false)
+  return (
+    <MotionGridItem
+      w="100%"
+      key={img.src}
+      h="100%"
+      onClick={() => {
+        if(isOpen){
+          setActiveRef(undefined)
+        }else{
+
+          setActiveRef({
+            ...img,
+            rect: img.ref.current.getBoundingClientRect(),
+          });
+        }
+        setIsOpen(!isOpen)
+      }}
+      layout
+    >
+      <Card
+        key={img.src}
+        src={img.src}
+        title={img.title}
+        category={img.category}
+        tags={img.tags}
+        ref={img.ref}
+      />
+      <AnimatePresence>{isOpen && <Content />}</AnimatePresence>
+    </MotionGridItem>
+  );
+};
+function Content() {
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <div className="row" />
+      <div className="row" />
+      <div className="row" />
+    </motion.div>
+  );
+}
 export default Projects;
