@@ -36,6 +36,7 @@ function App({ view }) {
             alignItems={"center"}
             flexDirection={"column"}
             className="lateReveal"
+            textAlign={"center"}
           >
             <Heading className="outline" fontSize={"8xl"}>
               Creative Developer

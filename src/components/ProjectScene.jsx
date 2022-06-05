@@ -146,7 +146,7 @@ const ProjectScene = forwardRef((props, ref) => {
     top *= -1;
   }
 
-  const scale = useAspect(activeRef.width, activeRef.height, ar);
+  const scale = useAspect(activeRef.width, activeRef.height, ar * 0.3);
   const finalScale = useAspect(
     activeRef.width ,
     activeRef.height ,
@@ -160,7 +160,7 @@ const ProjectScene = forwardRef((props, ref) => {
         <planeBufferGeometry />
         <projectsMaterial
           ref={matRef}
-          uMap={new THREE.TextureLoader().load(activeRef.src)}
+          uMap={activeRef.txtr}
         />
       </mesh>
     </>

@@ -15,59 +15,95 @@ import {
 import Card from "./Projects/Card";
 import useStore from "./customHooks/useStore";
 import { useLocation, useRoute } from "wouter";
-const Projects = forwardRef((props, ref) => {
+import { ChakraFlex, MotionGrid, MotionGridItem } from "./AnimatedComponents";
+const Projects = forwardRef(({ target }, ref) => {
   const setActiveRef = useStore((state) => state.setActiveRef);
   const activeRef = useStore((state) => state.activeRef);
 
-  const imgs = useStore(state => state.imgs)
+  const imgs = useStore((state) => state.imgs);
 
   const [matchesLandingPage] = useRoute("/");
   const [matchesProjectsPage, params] = useRoute("/projects/:id");
 
   const [location, setLocation] = useLocation();
+
+  const variants = {
+    show: {
+      opacity: 1,
+    },
+    hide: { opacity: 0 },
+    highlight: {},
+  };
   return (
-    <Flex w="100%" h="100vh" flexDirection="row" ref={ref} className="projects">
-      <Flex
+    <Flex
+      w="100%"
+      h="auto"
+      flexDirection={{ base: "column", lg: "row" }}
+      py={10}
+      className="projects"
+      justifyContent={"center"}
+      alignItems="center"
+    >
+      <ChakraFlex
+        display={"flex"}
         justifyContent={"center"}
         alignItems={"center"}
-        w="40%"
-        h="100vh"
-        p={20}
-        opacity={matchesLandingPage ? 1 : 0}
+        w={{ base: "100%", lg: "40%" }}
+        h="100%"
+        py={20}
+        // opacity={matchesLandingPage ? 1 : 0}
+        flexDirection={{ base: "column", lg: "row" }}
+        variants={variants}
+        animate={!activeRef ? "show" : "hide"}
       >
-        <Heading fontSize={"8xl"} transform="rotate(270deg)">
+        <Heading
+          fontSize={{ base: "5xl", lg: "8xl" }}
+          transform={{ lg: "rotate(270deg)" }}
+        >
           Projects
         </Heading>
         <Flex
-          justifyContent={"flex-start"}
+          justifyContent={"center"}
           alignItems={"center"}
-          w="30%"
+          w={{ base: "100%", lg: "30%" }}
           textAlign={"center"}
           fontSize={"2xl"}
         >
           <Text>Featuring the latest projects, ideas and experiments</Text>
         </Flex>
-      </Flex>
-      <Flex w="60%" h="100vh" justifyContent="center" alignItems={"center"}>
-        <Grid
+      </ChakraFlex>
+      <ChakraFlex
+      display={"flex"}
+        w={{ base: "100%", lg: "60%" }}
+        h="100%"
+        justifyContent="center"
+        alignItems={"center"}
+        ref={ref}
+      >
+        <MotionGrid
           width={"100%"}
           h="90%"
-          templateColumns={"repeat(3, 1fr)"}
-          gap={6}
-          gridAutoRows="50%"
+          templateColumns={{ base: "repeat(1, 1fr)", lg: "repeat(3, 1fr)" }}
+          gap={{ lg: 6 }}
+          gridAutoRows={{ lg: "50%" }}
           justifyContent={"center"}
         >
           {imgs.map((img, idx) => {
             return (
-              <GridItem
+              <MotionGridItem
                 w="100%"
                 key={img.src}
                 h="100%"
                 onClick={() => {
-                  setActiveRef({...img, rect: img.ref.current.getBoundingClientRect()});
+                  setActiveRef({
+                    ...img,
+                    rect: img.ref.current.getBoundingClientRect(),
+                  });
                 }}
-                opacity={!activeRef  ? 1 : 0}
-                // opacity={0.1}
+
+                variants={variants}
+                animate={activeRef && activeRef.id !== img.id ? "hide": "show"}
+             
               >
                 <Card
                   key={img.src}
@@ -77,11 +113,11 @@ const Projects = forwardRef((props, ref) => {
                   tags={img.tags}
                   ref={img.ref}
                 />
-              </GridItem>
+              </MotionGridItem>
             );
           })}
-        </Grid>
-      </Flex>
+        </MotionGrid>
+      </ChakraFlex>
     </Flex>
   );
 });

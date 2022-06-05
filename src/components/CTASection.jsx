@@ -43,12 +43,12 @@ function App() {
             alignItems={"center"}
             pt={20}
           >
-            <Heading fontSize={"xl"} fontWeight={"thin"}>
+            <Heading fontSize={{base: "lg", lg: "xl"}} fontWeight={"thin"}>
               Hello there
             </Heading>
           </Flex>
           <Flex w="70%" justifyContent={"center"}>
-            <Heading fontSize={"5xl"} textAlign={"center"} fontWeight={"thin"}>
+            <Heading fontSize={{ base: "2xl", lg: "5xl"}} textAlign={"center"} fontWeight={"thin"}>
               Developing immersive & trending online presences to showcase your
               ideas
             </Heading>

@@ -62,7 +62,7 @@ export default function WithAction() {
               py={1}
               rounded={"md"}
               onClick={() => {
-                setActiveRef(undefined)
+                setActiveRef(undefined);
                 setLocation("/");
               }}
             >

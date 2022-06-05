@@ -37,6 +37,7 @@ const Card = forwardRef(({ src, title, category, tags }, ref) => {
             top: 5,
             left: 0,
             backgroundImage: `url(${src})`,
+            // backgroundColor:
             filter: "blur(15px)",
             zIndex: -1,
           }}
