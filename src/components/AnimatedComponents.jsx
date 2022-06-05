@@ -1,4 +1,4 @@
-import { chakra, Grid, GridItem } from "@chakra-ui/react";
+import { chakra, Grid, GridItem, Stack } from "@chakra-ui/react";
 import { motion, isValidMotionProp } from "framer-motion";
 
 const ChakraFlex = chakra(motion.div, {
@@ -11,4 +11,5 @@ const ChakraFlex = chakra(motion.div, {
 
 const MotionGrid = motion(Grid);
 const MotionGridItem = motion(GridItem);
-export { ChakraFlex, MotionGrid, MotionGridItem };
+const MotionStack = motion(Stack);
+export { ChakraFlex, MotionGrid, MotionGridItem, MotionStack};

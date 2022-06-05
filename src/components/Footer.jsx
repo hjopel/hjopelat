@@ -10,6 +10,7 @@ import {
     VisuallyHidden,
   } from '@chakra-ui/react';
   import { FaInstagram, FaTwitter, FaYoutube } from 'react-icons/fa';
+import { ChakraFlex } from './AnimatedComponents';
   
   const Logo = (props) => {
     return (
@@ -60,7 +61,7 @@ import {
   
   export default function SmallWithLogoLeft() {
     return (
-      <Box
+      <ChakraFlex
         bg={useColorModeValue('gray.50', 'gray.900')}
         color={useColorModeValue('gray.700', 'gray.200')}>
         <Container
@@ -85,6 +86,6 @@ import {
             </SocialButton>
           </Stack>
         </Container>
-      </Box>
+      </ChakraFlex>
     );
   }

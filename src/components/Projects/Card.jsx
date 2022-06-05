@@ -8,8 +8,20 @@ import {
   Image,
 } from "@chakra-ui/react";
 import { forwardRef } from "react";
+import { MotionStack } from "../AnimatedComponents";
+import useStore from "../customHooks/useStore";
 
 const Card = forwardRef(({ src, title, category, tags }, ref) => {
+  const activeRef = useStore((state) => state.activeRef);
+  const variants = {
+    show: {
+      opacity: 1,
+    },
+    hide: {
+      opacity: 0,
+    },
+  };
+  const bgColor = useColorModeValue("white", "gray.800");
   return (
     <Center py={12} cursor="pointer">
       <Box
@@ -17,7 +29,7 @@ const Card = forwardRef(({ src, title, category, tags }, ref) => {
         p={6}
         maxW={"330px"}
         w={"full"}
-        bg={useColorModeValue("white", "gray.800")}
+        bg={activeRef ? "" : bgColor}
         boxShadow={"2xl"}
         rounded={"lg"}
         pos={"relative"}
@@ -56,7 +68,13 @@ const Card = forwardRef(({ src, title, category, tags }, ref) => {
             ref={ref}
           />
         </Box>
-        <Stack pt={10} align={"center"} w="100%">
+        <MotionStack
+          pt={10}
+          align={"center"}
+          w="100%"
+          variants={variants}
+          animate={activeRef ? "hide" : "show"}
+        >
           <Text color={"gray.500"} fontSize={"sm"} textTransform={"uppercase"}>
             {category}
           </Text>
@@ -65,10 +83,12 @@ const Card = forwardRef(({ src, title, category, tags }, ref) => {
           </Heading>
           <Stack direction={"row"}>
             {tags.map((tag) => (
-              <Text key={tag} fontSize="sm">{tag}</Text>
+              <Text key={tag} fontSize="sm">
+                {tag}
+              </Text>
             ))}
           </Stack>
-        </Stack>
+        </MotionStack>
       </Box>
     </Center>
   );

@@ -11,6 +11,8 @@ import {
   Grid,
   GridItem,
 } from "@chakra-ui/react";
+import useStore from "./customHooks/useStore";
+import { ChakraFlex } from "./AnimatedComponents";
 const Arrow = createIcon({
     displayName: "Arrow",
     viewBox: "0 0 72 24",
@@ -25,9 +27,14 @@ const Arrow = createIcon({
   });
   
 function App() {
+  const variants = {
+    lp: { opacity: 1 },
+    else: { opacity: 0, display: "none" },
+  };
+  const activeRef = useStore((state) => state.activeRef);
   return (
     <>
-      <Flex w="100%" h="60vh">
+      <ChakraFlex w="100%" h="60vh" display={"flex"} variants={variants} animate={activeRef ? "else" : "lp"} >
         <Flex
           w="100%"
           h="100%"
@@ -87,7 +94,7 @@ function App() {
             </Text>
           </Box>
         </Flex>
-      </Flex>
+      </ChakraFlex>
     </>
   );
 }

@@ -35,11 +35,12 @@ const Projects = forwardRef(({ target }, ref) => {
     highlight: {},
   };
   return (
-    <Flex
+    <ChakraFlex
+      display={"flex"}
       w="100%"
       h="auto"
       flexDirection={{ base: "column", lg: "row" }}
-      py={10}
+      // py={10}
       className="projects"
       justifyContent={"center"}
       alignItems="center"
@@ -73,7 +74,7 @@ const Projects = forwardRef(({ target }, ref) => {
         </Flex>
       </ChakraFlex>
       <ChakraFlex
-      display={"flex"}
+        display={"flex"}
         w={{ base: "100%", lg: "60%" }}
         h="100%"
         justifyContent="center"
@@ -100,10 +101,9 @@ const Projects = forwardRef(({ target }, ref) => {
                     rect: img.ref.current.getBoundingClientRect(),
                   });
                 }}
-
+                pointerEvents={activeRef ? "none" : "initial"}
                 variants={variants}
-                animate={activeRef && activeRef.id !== img.id ? "hide": "show"}
-             
+                animate={activeRef ? "hide" : "show"}
               >
                 <Card
                   key={img.src}
@@ -118,7 +118,7 @@ const Projects = forwardRef(({ target }, ref) => {
           })}
         </MotionGrid>
       </ChakraFlex>
-    </Flex>
+    </ChakraFlex>
   );
 });
 
