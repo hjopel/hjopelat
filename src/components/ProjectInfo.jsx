@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { forwardRef, ReactNode } from "react";
 import {
   Stack,
   Container,
@@ -9,43 +9,32 @@ import {
   SimpleGrid,
 } from "@chakra-ui/react";
 
-import useStore from "./customHooks/useStore"
+import useStore from "./customHooks/useStore";
 
-export default function StatsGridWithImage() {
-
-    const activeRef = useStore((state) => state.activeRef);
+const Info = forwardRef((props, ref) =>{
+  const activeRef = useStore((state) => state.activeRef);
 
   return (
-      activeRef && 
-    <Box bg={"white"} position={"relative"}>
-      <Flex
-        flex={1}
-        zIndex={0}
-        display={{ base: "none", lg: "flex" }}
-        backgroundImage={activeRef.src}
-        backgroundSize={"cover"}
-        backgroundPosition="center"
-        backgroundRepeat="no-repeat"
-        position={"absolute"}
-        width={"50%"}
-        insetY={0}
-        right={0}
-      >
-        <Flex
-          bgGradient={"linear(to-r, white , transparent)"}
-          w={"full"}
-          h={"full"}
-        />
-      </Flex>
-      <Container maxW={"7xl"} zIndex={10} position={"relative"}>
-        <Stack direction={{ base: "column", lg: "row" }}>
+    activeRef && (
+      <Flex bg={"white"} w="100%" h="100vh" p={20}>
+        <Stack
+          direction={{ base: "column", lg: "row" }}
+          justifyContent={"center"}
+          alignItems={"center"}
+          w="50%"
+        >
           <Stack
             flex={1}
-            color={"gray.400"}
             justify={{ lg: "center" }}
             py={{ base: 4, md: 20, xl: 60 }}
           >
-            <Box mb={{ base: 8, md: 20 }}>
+            <Flex
+              mb={{ base: 8, md: 20 }}
+              flexDir="column"
+              justifyContent={"center"}
+              alignItems="center"
+              textAlign={"center"}
+            >
               <Text
                 fontFamily={"heading"}
                 fontWeight={700}
@@ -54,30 +43,29 @@ export default function StatsGridWithImage() {
                 fontSize={"xl"}
                 color={"gray.500"}
               >
-                Technology
+                {activeRef.category}
               </Text>
               <Heading
-                color={"white"}
+                color={"black"}
                 mb={5}
                 fontSize={{ base: "3xl", md: "5xl" }}
               >
-                21st century agriculture
+                {activeRef.title}
               </Heading>
-              <Text fontSize={"xl"} color={"gray.400"}>
-                The NewLife™ technology allows you to monitor your crops and get
-                complete insights at real time. The proprietary
-                software/hardware ecosystem prevents your plants from getting
-                neglected.
+              <Text fontSize={"xl"}>
+                Nulla fugiat aute ea commodo nisi nisi aliqua aute irure do.
+                Aliquip eu duis occaecat ullamco cillum proident dolore
+                excepteur ut consectetur mollit aliqua sit nostrud.
               </Text>
-            </Box>
+            </Flex>
 
-            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
+            {/* <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
               {stats.map((stat) => (
                 <Box key={stat.title}>
                   <Text
                     fontFamily={"heading"}
                     fontSize={"3xl"}
-                    color={"white"}
+                    color={"black"}
                     mb={3}
                   >
                     {stat.title}
@@ -87,17 +75,22 @@ export default function StatsGridWithImage() {
                   </Text>
                 </Box>
               ))}
-            </SimpleGrid>
+            </SimpleGrid> */}
           </Stack>
-          <Flex flex={1} />
         </Stack>
-      </Container>
-    </Box>
+        <Flex
+          w="50%"
+          h="100%"
+          
+          ref={ref}
+        ></Flex>
+      </Flex>
+    )
   );
-}
-
+} ) 
+export default Info
 const StatsText = ({ children }) => (
-  <Text as={"span"} fontWeight={700} color={"white"}>
+  <Text as={"span"} fontWeight={700} color={"black"}>
     {children}
   </Text>
 );

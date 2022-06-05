@@ -20,6 +20,7 @@ const ProjectsMaterial = shaderMaterial(
     uMap2: new THREE.Texture(),
     uMix: 0,
     uDist: 0.01,
+    uAlpha: 1,
   },
 
   // vertex shader
@@ -74,11 +75,12 @@ const ProjectsMaterial = shaderMaterial(
       uniform sampler2D uMap2;
       uniform float uMix;
       varying vec2 vUv;
+      uniform float uAlpha;
       void main() {
         vec4 txtr = texture2D(uMap, vUv);
         // vec4 txtr2 = texture2D(uMap2, vUv);
         // gl_FragColor = mix(txtr, txtr2, uMix);
-        gl_FragColor = vec4(txtr.rgb, txtr.a);
+        gl_FragColor = vec4(txtr.rgb, uAlpha);
         // gl_FragColor = vec4(1., 0.,0.,.1);
       }
     `
@@ -89,7 +91,7 @@ const ProjectScene = forwardRef((props, ref) => {
   const [location, setLocation] = useLocation();
   const { viewport } = useThree();
   const activeRef = useStore((state) => state.activeRef);
-  const rect = activeRef.ref.current.getBoundingClientRect();
+  const rect = activeRef.rect;
   const matRef = useRef();
   const meshRef = useRef();
 
@@ -111,23 +113,31 @@ const ProjectScene = forwardRef((props, ref) => {
         },
         "<"
       )
+      // .to(matRef.current, {uAlpha: 0, duration: 2}, "<")
       .add(() => {
         setLocation("/projects/hjopel");
-      });
+      }, ">");
   });
-  console.log(meshRef);
   let ar = 1;
   let top = 0,
     left = 0;
+  let widthPct = 0,
+    heightPct = 0;
   if (ref && ref.current) {
+    // const parentRect = ref.current.getBoundingClientRect();
     const parentRect = ref.current.getBoundingClientRect();
-
+    const canvasRect = document.getElementById("canvasEl").getBoundingClientRect()
+    console.log(parentRect)
+    console.log(rect)
+    // const parentRect = document.getElementById("finalView").getBoundingClientRect()
+    // parentRect.width *= 1.6;
+    // parentRect.width *= 1.6;
     if (activeRef.width > activeRef.height) {
       ar = rect.height / parentRect.height;
     } else {
       ar = rect.width / parentRect.width;
     }
-    const leftPct = (rect.x + rect.width / 2) / parentRect.width;
+    const leftPct = ((rect.x - parentRect.x) + rect.width / 2) / parentRect.width;
     left = leftPct * viewport.width - viewport.width / 2;
 
     const topPct = (rect.y + rect.height / 2) / parentRect.height;
@@ -137,7 +147,11 @@ const ProjectScene = forwardRef((props, ref) => {
   }
 
   const scale = useAspect(activeRef.width, activeRef.height, ar);
-  const finalScale = useAspect(activeRef.width, activeRef.height, 0.7);
+  const finalScale = useAspect(
+    activeRef.width ,
+    activeRef.height ,
+    1
+  );
 
   return (
     <>

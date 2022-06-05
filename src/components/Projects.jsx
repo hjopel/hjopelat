@@ -19,65 +19,11 @@ const Projects = forwardRef((props, ref) => {
   const setActiveRef = useStore((state) => state.setActiveRef);
   const activeRef = useStore((state) => state.activeRef);
 
-  const setImgs = useStore((state) => state.setImgs);
-  const imgs = [
-    {
-      src: "/ss.png",
-      category: "website",
-      id: "hjopel",
-      title: "hjopel.at",
-      tags: ["react", "webgl", "three.js"],
-      ref: useRef(),
-      width: 1920,
-      height: 1080,
-    },
-    {
-      src: "/florist.png",
-      category: "mockup",
-      id: "florist",
-
-      title: "florist",
-      tags: ["react", "webgl", "three.js", "prototype"],
-      ref: useRef(),
-      width: 1920,
-      height: 1080,
-    },
-    {
-      src: "/naturjuwelgaas.png",
-      category: "website",
-      id: "naturjuwel",
-      title: "naturjuwel",
-      tags: ["wordpress", "smoobu"],
-      ref: useRef(),
-      width: 1920,
-      height: 1080,
-    },
-    {
-      src: "/lp_admissio.png",
-      category: "application",
-      id: "admissio",
-      title: "admissio",
-      tags: ["angular", "node.js", "fullstack"],
-      ref: useRef(),
-      width: 2021,
-      height: 2475,
-    },
-    {
-      src: "/lp_hgoe.png",
-      category: "application",
-      id: "hgoe",
-      title: "hgoe-burgenland",
-      tags: ["angular", "wp", "node.js", "fullstack"],
-      ref: useRef(),
-      width: 1287,
-      height: 2012,
-    },
-  ];
+  const imgs = useStore(state => state.imgs)
 
   const [matchesLandingPage] = useRoute("/");
   const [matchesProjectsPage, params] = useRoute("/projects/:id");
 
-  setImgs(imgs);
   const [location, setLocation] = useLocation();
   return (
     <Flex w="100%" h="100vh" flexDirection="row" ref={ref} className="projects">
@@ -118,9 +64,9 @@ const Projects = forwardRef((props, ref) => {
                 key={img.src}
                 h="100%"
                 onClick={() => {
-                  setActiveRef(img);
+                  setActiveRef({...img, rect: img.ref.current.getBoundingClientRect()});
                 }}
-                opacity={!activeRef || activeRef.id === img.id ? 1 : 0}
+                opacity={!activeRef  ? 1 : 0}
                 // opacity={0.1}
               >
                 <Card
