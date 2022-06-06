@@ -16,6 +16,7 @@ body,
 
 body {
   font-family: inter;
+  overflow-x: hidden;
 }
 
 .container {
@@ -31,6 +32,7 @@ body {
   left: 0px;
   width: 100vw !important;
   height: 100vh !important;
+  z-index: 100;
 }
 
 .projectView {
@@ -44,12 +46,10 @@ body {
   -webkit-text-fill-color: transparent;
   -webkit-text-stroke-width: 2.5px;
   -webkit-text-stroke-color: black;
-
 }
 .lateReveal {
   clip-path: polygon(25% 0%, 25% 0, 0 100%, 0% 100%);
   transition: all 1.5s;
-
 }
 .outlineSmall {
   -webkit-text-fill-color: transparent;
@@ -63,3 +63,39 @@ body {
   border-radius: 10px;
   margin-top: 12px;
 }
+ul,
+li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+ul {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  padding: 20px;
+  border-radius: 25px;
+}
+
+li {
+  background-color: rgba(214, 214, 214, 0.5);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+li:last-child {
+  margin-bottom: 0px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  background-color: #666;
+  border-radius: 20px;
+}
+

@@ -2,8 +2,8 @@ import "./App.css";
 import { Box, useColorModeValue, Flex, Text, chakra } from "@chakra-ui/react";
 import useRefs from "react-use-refs";
 import { Canvas, extend } from "@react-three/fiber";
-import { Suspense, useEffect, useCallback, useRef } from "react";
-import { View, Preload } from "@react-three/drei";
+import { Suspense, useEffect, useState, useRef, useMemo } from "react";
+import { View, Preload, Loader } from "@react-three/drei";
 import Header from "./components/Header";
 import Projects from "./components/Projects";
 import ProjectScene from "./components/ProjectScene";
@@ -15,17 +15,25 @@ import CTASection from "./components/CTASection";
 import { useRoute } from "wouter";
 import Footer from "./components/Footer";
 import * as THREE from "three";
-
+import {
+  LocomotiveScrollProvider,
+  useLocomotiveScroll,
+} from "react-locomotive-scroll";
+import "locomotive-scroll/dist/locomotive-scroll.css";
+import LoadingOverlay from "./components/Loader";
 import { ChakraFlex } from "./components/AnimatedComponents";
+import { AnimatePresence } from "framer-motion";
 // import * as oida from "framer-motion/three"
 function App() {
-  const [ref, view1, projectView, view3, view4, view5] = useRefs();
+  const [ref, view1, projectView, view3, view4, view5, scrollRef] = useRefs();
+  const [loading, setIsLoading] = useState(true);
   useEffect(() => {
     gsap.timeline().to(".lateReveal", {
       clipPath: "polygon(0 1%, 100% 0%, 100% 100%, 0% 100%)",
       stagger: 0.3,
       duration: 2,
     });
+    setTimeout(() => setIsLoading(false), 3000);
   });
 
   const activeRef = useStore((state) => state.activeRef);
@@ -95,58 +103,88 @@ function App() {
     },
   ];
   setImgs(imgs);
+  const geometry = useMemo(() => {
+    return <planeBufferGeometry args={[1, 1, 1000, 1000]} />;
+  });
+
+  const renderImageViews = useMemo(() => {
+    if (activeRef) {
+      return (
+        <View track={activeRef.ref}>
+          <ProjectScene img={activeRef} geom={geometry} />{" "}
+        </View>
+      );
+    } else {
+      return imgs.map((img) => (
+        <View track={img.ref} key={img.id}>
+          <ProjectScene img={img} geom={geometry} />{" "}
+        </View>
+      ));
+    }
+  }, [activeRef, imgs]);
 
   return (
     <>
-      <ChakraFlex
-        w="100%"
-        position={"absolute"}
-        top={0}
-        left={0}
-        zIndex={1000}
-        px={{ base: 0, lg: 20 }}
-        py={{ base: 0, lg: 10 }}
+      <LocomotiveScrollProvider
+        options={{
+          smooth: true,
+          // ... all available Locomotive Scroll instance options
+          smartphone: {
+            smooth: true,
+          },
+          tablet: {
+            smooth: true,
+          },
+        }}
+        containerRef={scrollRef}
       >
-        <Header />
-      </ChakraFlex>
-      <ChakraFlex
-        ref={ref}
-        className="container"
-        bgColor={useColorModeValue("light.bg", "dark.bg")}
-        justifyContent="center"
-        alignItems={"center"}
-        display="flex"
-      >
-        <ChakraFlex w="100%" h="100%" layout>
-          <Hero view={view1} />
-          <CTASection />
-
-          <Projects ref={view3} />
-          <Footer />
-
-          <Canvas
-            onCreated={(state) => state.events.connect(ref.current)}
-            className="canvas"
-            id="canvasEl"
+        <AnimatePresence>{loading && <LoadingOverlay />}</AnimatePresence>
+        <main data-scroll-container ref={scrollRef}>
+          <ChakraFlex
+            w="100%"
+            position={"absolute"}
+            top={0}
+            left={0}
+            zIndex={1000}
+            px={{ base: 0, lg: 20 }}
+            py={{ base: 0, lg: 10 }}
           >
-            {/* <layoutCamera /> */}
-            {/* <LayoutCamera /> */}
-            <Suspense fallback={null}>
-              <View track={view1}>
-                <Scene />
-              </View>
+            <Header />
+          </ChakraFlex>
+          <ChakraFlex
+            ref={ref}
+            className="container"
+            bgColor={useColorModeValue("light.bg", "dark.bg")}
+            justifyContent="center"
+            alignItems={"center"}
+            display="flex"
+          >
+            <ChakraFlex w="100%" h="100%" layout>
+              <Hero view={view1} />
+              <CTASection />
 
-              {false && (
-                <View track={view3}>
-                  <ProjectScene ref={view3} />
-                  {/* ref not used as a traditional ref, but as a target */}
-                </View>
-              )}
-              <Preload all />
-            </Suspense>
-          </Canvas>
-        </ChakraFlex>
-      </ChakraFlex>
+              <Projects ref={view3} />
+              <Footer />
+
+              <Canvas
+                onCreated={(state) => state.events.connect(ref.current)}
+                className="canvas"
+                id="canvasEl"
+              >
+                <Suspense fallback={null}>
+                  <View track={view1}>
+                    <Scene />
+                  </View>
+
+                  {/* {renderImageViews} */}
+                  <Preload all />
+                </Suspense>
+              </Canvas>
+              {/* <Loader /> */}
+            </ChakraFlex>
+          </ChakraFlex>
+        </main>
+      </LocomotiveScrollProvider>
     </>
   );
 }

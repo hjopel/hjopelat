@@ -8,7 +8,7 @@ import {
   Image,
 } from "@chakra-ui/react";
 import { forwardRef } from "react";
-import { MotionStack } from "../AnimatedComponents";
+import { MotionCenter, MotionStack } from "../AnimatedComponents";
 import useStore from "../customHooks/useStore";
 
 const Card = forwardRef(({ src, title, category, tags }, ref) => {
@@ -23,7 +23,7 @@ const Card = forwardRef(({ src, title, category, tags }, ref) => {
   };
   const bgColor = useColorModeValue("white", "gray.800");
   return (
-    <Center py={12} cursor="pointer">
+    <MotionCenter py={12} cursor="pointer" layout>
       <Box
         role={"group"}
         p={6}
@@ -90,7 +90,7 @@ const Card = forwardRef(({ src, title, category, tags }, ref) => {
           </Stack>
         </MotionStack>
       </Box>
-    </Center>
+    </MotionCenter>
   );
 });
 export default Card;

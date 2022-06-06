@@ -5,22 +5,22 @@ import gsap from "gsap";
 import useStore from "./customHooks/useStore";
 
 function App({ view }) {
-  useEffect(() => {
-    gsap.timeline().to(".lateReveal", {
-      clipPath: "polygon(0 1%, 100% 0%, 100% 100%, 0% 100%)",
-      stagger: 0.3,
-      duration: 2,
-    });
-  });
-  const variants = {
-    lp: { opacity: 1, display: "initial" },
-    else: { opacity: 0, display: "none" },
-  };
-  const activeRef = useStore((state) => state.activeRef);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     gsap.timeline().to(
+  //       ".lateReveal",
+  //       {
+  //         clipPath: "polygon(0 1%, 100% 0%, 100% 100%, 0% 100%)",
+  //         stagger: 0.3,
+  //         duration: 2,
+  //       },
+  //       5000
+  //     );
+  //   });
+  // });
+
   return (
-    <ChakraFlex variants={variants} 
-    // animate={activeRef ? "else" : "lp"}
-    >
+    <ChakraFlex>
       <Flex
         display="flex"
         w="100%"
@@ -30,9 +30,7 @@ function App({ view }) {
         cursor="none"
       />
       <Flex
-        variants={variants}
         display="flex"
-        // animate={activeRef ? "else" : "lp"}
         w="100%"
         h="100vh"
         zIndex={1000}

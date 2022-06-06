@@ -1,45 +1,32 @@
-import { forwardRef, useRef, useState } from "react";
-import {
-  Box,
-  Heading,
-  Flex,
-  useColorModeValue,
-  Text,
-  createIcon,
-  Icon,
-  Button,
-  Image,
-  Grid,
-  GridItem,
-} from "@chakra-ui/react";
-import Card from "./Projects/Card";
+import { forwardRef, useEffect, useState } from "react";
+import { useColorModeValue } from "@chakra-ui/react";
 import useStore from "./customHooks/useStore";
 import { useLocation, useRoute } from "wouter";
-import { ChakraFlex, MotionGrid, MotionGridItem } from "./AnimatedComponents";
+import {
+  ChakraBox,
+  ChakraFlex,
+  ChakraImg,
+  MotionCenter,
+  MotionGrid,
+  MotionGridItem,
+  MotionHeading,
+  MotionText,
+} from "./AnimatedComponents";
+import { useInView } from "react-intersection-observer";
+import { useAnimation } from "framer-motion";
 import { AnimatePresence, AnimateSharedLayout, motion } from "framer-motion";
-const Projects = forwardRef(({ target }, ref) => {
+const descItems = ["a job", "a project", "something to code"];
+
+const Projects = forwardRef(({ target }, pRef) => {
   const setActiveRef = useStore((state) => state.setActiveRef);
   const activeRef = useStore((state) => state.activeRef);
 
   const imgs = useStore((state) => state.imgs);
-
-  const [matchesLandingPage] = useRoute("/");
-  const [matchesProjectsPage, params] = useRoute("/projects/:id");
-
-  const [location, setLocation] = useLocation();
-
-  const variants = {
-    show: {
-      opacity: 1,
-    },
-    hide: { opacity: 0 },
-    highlight: {},
-  };
   return (
     <ChakraFlex
       display={"flex"}
       w="100%"
-      h="auto"
+      h="100vh"
       flexDirection={{ base: "column", lg: "row" }}
       // py={10}
       className="projects"
@@ -53,49 +40,69 @@ const Projects = forwardRef(({ target }, ref) => {
         w={{ base: "100%", lg: "40%" }}
         h="100%"
         py={20}
-        // opacity={matchesLandingPage ? 1 : 0}
         flexDirection={{ base: "column", lg: "row" }}
-        variants={variants}
-        animate={!activeRef ? "show" : "hide"}
       >
-        <Heading
-          fontSize={{ base: "5xl", lg: "8xl" }}
-          transform={{ lg: "rotate(270deg)" }}
-        >
-          Projects
-        </Heading>
-        <Flex
+        <AnimatePresence exitBeforeEnter>
+          <MotionHeading
+            fontSize={{ base: "5xl", lg: "8xl" }}
+            transform={{ lg: "rotate(270deg)" }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: { duration: 0.5 } }}
+            exit={{ opacity: 0 }}
+            key={activeRef ? activeRef.title : "Projects"}
+            width="70%"
+            // bgColor="blue.100"
+            textAlign="center"
+          >
+            {activeRef ? activeRef.title : "Projects"}
+          </MotionHeading>
+        </AnimatePresence>
+        <ChakraBox
+          display="flex"
           justifyContent={"center"}
           alignItems={"center"}
           w={{ base: "100%", lg: "30%" }}
           textAlign={"center"}
           fontSize={"2xl"}
+          transform={{ lg: "translateX(-50%)" }}
         >
-          <Text>Featuring the latest projects, ideas and experiments</Text>
-        </Flex>
+          <AnimatePresence>
+            <MotionText
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              w="100%"
+            >
+              Featuring the latest projects, ideas and experiments
+            </MotionText>
+          </AnimatePresence>
+        </ChakraBox>
       </ChakraFlex>
       <ChakraFlex
         display={"flex"}
         w={{ base: "100%", lg: "60%" }}
-        h="100%"
+        h="80vh"
         justifyContent="center"
         alignItems={"center"}
-        ref={ref}
+        ref={pRef}
       >
         <AnimateSharedLayout>
-          <MotionGrid
-            width={"100%"}
-            h="90%"
-            templateColumns={{ base: "repeat(1, 1fr)", lg: "repeat(3, 1fr)" }}
-            gap={{ lg: 6 }}
-            gridAutoRows={{ lg: "50%" }}
-            justifyContent={"center"}
+          <ChakraFlex
+            display={"flex"}
             layout
+            w="100%"
+            h="80%"
+            flexDir={{ base: "column", lg: "row"}}
+            gap={{ base: 20, lg: 4 }}
+            // flexWrap={{ lg: "wrap" }}
+            overflow="scroll"
           >
-            {imgs.map((img, idx) => (
-              <ProjectCard img={img} />
+            {imgs.map((img) => (
+              <AnimatePresence key={img.id}>
+                <ProjectCard img={img} />
+              </AnimatePresence>
             ))}
-          </MotionGrid>
+          </ChakraFlex>
         </AnimateSharedLayout>
       </ChakraFlex>
     </ChakraFlex>
@@ -104,37 +111,69 @@ const Projects = forwardRef(({ target }, ref) => {
 
 const ProjectCard = ({ img }) => {
   const setActiveRef = useStore((state) => state.setActiveRef);
-
-  const [isOpen, setIsOpen] = useState(false)
+  const activeRef = useStore((state) => state.activeRef);
+  const [isOpen, setIsOpen] = useState(false);
+  const bg = useColorModeValue("white", "gray.800");
   return (
-    <MotionGridItem
-      w="100%"
-      key={img.src}
-      h="100%"
-      onClick={() => {
-        if(isOpen){
-          setActiveRef(undefined)
-        }else{
-
-          setActiveRef({
-            ...img,
-            rect: img.ref.current.getBoundingClientRect(),
-          });
-        }
-        setIsOpen(!isOpen)
-      }}
+    <ChakraBox
       layout
+      cursor="pointer"
+      initial={{ opacity: 0 }}
+      animate={
+        isOpen ? { opacity: 1, width: "100%" } : { opacity: 1, width: "30%" }
+      }
+      exit={{ opacity: 0 }}
+      id={img.id}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+      onClick={() => {
+        setIsOpen(!isOpen);
+        if (isOpen) {
+          setActiveRef(undefined);
+        } else {
+          setActiveRef(img);
+        }
+      }}
+      // transition={{duration: 3}}
     >
-      <Card
-        key={img.src}
-        src={img.src}
-        title={img.title}
-        category={img.category}
-        tags={img.tags}
-        ref={img.ref}
-      />
-      <AnimatePresence>{isOpen && <Content />}</AnimatePresence>
-    </MotionGridItem>
+      <MotionCenter w="100%" layout>
+        <ChakraBox
+          role={"group"}
+          p={6}
+          bg={bg}
+          boxShadow={"2xl"}
+          rounded={"lg"}
+          zIndex={1}
+          layout
+        >
+          <ChakraBox
+            display="flex"
+            rounded={"lg"}
+            mt={-12}
+            pos={"relative"}
+            height={"100%"}
+            layout
+          >
+            <ChakraBox
+              display="flex"
+              ref={img.ref}
+              layout
+              w="full"
+              h="full"
+            >
+              <ChakraImg
+                rounded={"lg"}
+                objectFit={"cover"}
+                src={img.src}
+                width={282}
+                height={230}
+              />
+              <AnimatePresence>{isOpen && <Content />}</AnimatePresence>
+            </ChakraBox>
+          </ChakraBox>
+        </ChakraBox>
+      </MotionCenter>
+    </ChakraBox>
   );
 };
 function Content() {

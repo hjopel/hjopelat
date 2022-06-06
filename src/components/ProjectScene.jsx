@@ -64,7 +64,7 @@ const ProjectsMaterial = shaderMaterial(
           position.y  + uTime*0.1,
           (position.x * position.y)*0.02)) * uDist;
       vec3 finalPos = position + distortion;
-      vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
+      vec4 modelViewPosition = modelViewMatrix * vec4(finalPos, 1.0);
     gl_Position = projectionMatrix * modelViewPosition;
   }
     `,
@@ -87,76 +87,26 @@ const ProjectsMaterial = shaderMaterial(
 );
 
 extend({ ProjectsMaterial });
-const ProjectScene = forwardRef((props, ref) => {
-  const [location, setLocation] = useLocation();
-  const { viewport } = useThree();
-  const activeRef = useStore((state) => state.activeRef);
-  const rect = activeRef.rect;
+const ProjectScene = ({ img, geom }) => {
   const matRef = useRef();
   const meshRef = useRef();
-
-  useEffect(() => {
-    gsap
-      .timeline()
-      .to(meshRef.current.scale, {
-        x: finalScale[0],
-        y: finalScale[1],
-        duration: 2,
-        delay: 0.5,
-      })
-      .to(
-        meshRef.current.position,
-        {
-          x: 0,
-          y: 0,
-          duration: 2,
-        },
-        "<"
-      )
-      // .to(matRef.current, {uAlpha: 0, duration: 2}, "<")
-      // .add(() => {
-      //   setLocation("/projects/hjopel");
-      // }, ">");
-  });
-  let ar = 1;
-  let top = 0,
-    left = 0;
-  let widthPct = 0,
-    heightPct = 0;
-  if (ref && ref.current) {
-    // const parentRect = ref.current.getBoundingClientRect();
-    const parentRect = ref.current.getBoundingClientRect();
-    const canvasRect = document
-      .getElementById("canvasEl")
-      .getBoundingClientRect();
-    // const parentRect = document.getElementById("finalView").getBoundingClientRect()
-    // parentRect.width *= 1.6;
-    // parentRect.width *= 1.6;
-    if (activeRef.width > activeRef.height) {
-      ar = rect.height / parentRect.height;
-    } else {
-      ar = rect.width / parentRect.width;
+  useFrame(({ clock }) => {
+    if (matRef) {
+      matRef.current.uTime = clock.getElapsedTime();
     }
-    const leftPct = (rect.x - parentRect.x + rect.width / 2) / parentRect.width;
-    left = leftPct * viewport.width - viewport.width / 2;
-
-    const topPct = (rect.y + rect.height / 2) / parentRect.height;
-
-    top = topPct * viewport.height - viewport.height / 2;
-    top *= -1;
-  }
-
-  const scale = useAspect(activeRef.width, activeRef.height, ar * 0.3);
-  const finalScale = useAspect(activeRef.width, activeRef.height, 1);
-
+  });
+  useEffect(()=>{
+    console.log(meshRef.current)
+  })
+  const scale = useAspect(img.width, img.height, 1);
   return (
     <>
       <ambientLight intensity={1} />
-      <mesh scale={scale} ref={meshRef} position={[left, top, 0]}>
-        <planeBufferGeometry />
-        <projectsMaterial ref={matRef} uMap={activeRef.txtr} />
-      </mesh>
+      <points scale={scale} ref={meshRef} position={[0, 0, 0]}>
+        {geom}
+        <projectsMaterial ref={matRef} uMap={img.txtr} />
+      </points>
     </>
   );
-});
+};
 export default ProjectScene;
