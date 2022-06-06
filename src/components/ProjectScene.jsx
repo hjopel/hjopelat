@@ -12,6 +12,7 @@ import * as THREE from "three";
 import glsl from "babel-plugin-glsl/macro";
 import gsap from "gsap";
 import useStore from "./customHooks/useStore";
+import { useLocation } from "wouter";
 const ProjectsMaterial = shaderMaterial(
   {
     uTime: 0,

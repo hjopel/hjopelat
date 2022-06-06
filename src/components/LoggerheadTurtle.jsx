@@ -8,7 +8,7 @@ const Turtle = () => {
     <svg width="300" height={"280"} viewBox="0 0 896.25 781.875">
       <motion.path
         initial={{ pathLength: 0 }}
-        animate={{ pathLength: 0.8 }}
+        animate={{ pathLength: 1 }}
         transition={transition}
         fill="transparent"
         strokeWidth="1.2"

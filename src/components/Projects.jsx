@@ -1,243 +1,193 @@
-import gsap from "gsap";
-import ScrollTrigger from "gsap/ScrollTrigger";
-import React, { useLayoutEffect } from "react";
-import styled from "styled-components";
-import { useRef } from "react";
+import { forwardRef, useEffect, useState } from "react";
+import { useColorModeValue } from "@chakra-ui/react";
+import useStore from "./customHooks/useStore";
+import { useLocation, useRoute } from "wouter";
+import {
+  ChakraBox,
+  ChakraFlex,
+  ChakraImg,
+  MotionCenter,
+  MotionGrid,
+  MotionGridItem,
+  MotionHeading,
+  MotionText,
+} from "./AnimatedComponents";
+import { useInView } from "react-intersection-observer";
+import { useAnimation } from "framer-motion";
+import { AnimatePresence, AnimateSharedLayout, motion } from "framer-motion";
+const descItems = ["a job", "a project", "something to code"];
 
-import { motion } from "framer-motion";
+const Projects = forwardRef(({ target }, pRef) => {
+  const setActiveRef = useStore((state) => state.setActiveRef);
+  const activeRef = useStore((state) => state.activeRef);
 
-import img1 from "../assets/Images/1.webp";
-import img2 from "../assets/Images/2.webp";
-import img3 from "../assets/Images/3.webp";
-import img4 from "../assets/Images/4.webp";
-import img5 from "../assets/Images/5.webp";
-import img6 from "../assets/Images/6.webp";
-import img7 from "../assets/Images/7.webp";
-import img8 from "../assets/Images/8.webp";
-import img9 from "../assets/Images/9.webp";
-import img10 from "../assets/Images/10.webp";
-
-const Section = styled.section`
-  min-height: 100vh;
-  height: auto;
-  width: 100vw;
-  margin: 0 auto;
-  overflow: hidden;
-
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-
-  position: relative;
-`;
-const Title = styled.h1`
-  font-size: ${(props) => props.theme.fontxxxl};
-  font-family: "Kaushan Script";
-  font-weight: 300;
-  text-shadow: 1px 1px 1px ${(props) => props.theme.body};
-  color: ${(props) => props.theme.text};
-  position: absolute;
-  top: 1rem;
-  left: 5%;
-  z-index: 11;
-
-  @media (max-width: 64em) {
-    font-size: ${(props) => props.theme.fontxxl};
-  }
-  @media (max-width: 48em) {
-    font-size: ${(props) => props.theme.fontxl};
-  }
-`;
-
-const Left = styled.div`
-  width: 35%;
-  background-color: ${(props) => props.theme.body};
-  color: ${(props) => props.theme.text};
-
-  min-height: 100vh;
-  z-index: 5;
-
-  position: fixed;
-  left: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  p {
-    font-size: ${(props) => props.theme.fontlg};
-    font-weight: 300;
-    width: 80%;
-    margin: 0 auto;
-  }
-
-  @media (max-width: 64em) {
-    p {
-      font-size: ${(props) => props.theme.fontmd};
-    }
-  }
-
-  @media (max-width: 48em) {
-    width: 40%;
-    p {
-      font-size: ${(props) => props.theme.fontsm};
-    }
-  }
-
-  @media (max-width: 30em) {
-    p {
-      font-size: ${(props) => props.theme.fontxs};
-    }
-  }
-`;
-const Right = styled.div`
-  position: absolute;
-  left: 35%;
-  padding-left: 30%;
-  min-height: 100vh;
-
-  background-color: ${(props) => props.theme.grey};
-  /* width: 65%; */
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-
-  h1 {
-    width: 5rem;
-    margin: 0 2rem;
-  }
-`;
-
-const Item = styled(motion.div)`
-  width: 20rem;
-  margin-right: 6rem;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  img {
-    width: 100%;
-    height: auto;
-    cursor: pointer;
-  }
-  h1 {
-    display: inline-block;
-    width: fit-content;
-    font-weight: 500;
-    text-align: center;
-    cursor: pointer;
-  }
-
-  @media (max-width: 48em) {
-    width: 15rem;
-  }
-`;
-
-const Product = ({ img, title = "" }) => {
+  const imgs = useStore((state) => state.imgs);
   return (
-    <Item
-      initial={{ filter: "grayscale(100%)" }}
-      whileInView={{ filter: "grayscale(0%)" }}
-      transition={{ duration: 0.5 }}
-      viewport={{ once: false, amount: "all" }}
+    <ChakraFlex
+      display={"flex"}
+      w="100%"
+      h="100vh"
+      flexDirection={{ base: "column", lg: "row" }}
+      // py={10}
+      className="projects"
+      justifyContent={"center"}
+      alignItems="center"
     >
-      <img src={img} alt={title} />
-      <h1>{title}</h1>
-    </Item>
+      <ChakraFlex
+        display={"flex"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        w={{ base: "100%", lg: "40%" }}
+        h="100%"
+        py={20}
+        flexDirection={{ base: "column", lg: "row" }}
+      >
+        <AnimatePresence exitBeforeEnter>
+          <MotionHeading
+            fontSize={{ base: "5xl", lg: "8xl" }}
+            transform={{ lg: "rotate(270deg)" }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: { duration: 0.5 } }}
+            exit={{ opacity: 0 }}
+            key={activeRef ? activeRef.title : "Projects"}
+            width="70%"
+            // bgColor="blue.100"
+            textAlign="center"
+          >
+            {activeRef ? activeRef.title : "Projects"}
+          </MotionHeading>
+        </AnimatePresence>
+        <ChakraBox
+          display="flex"
+          justifyContent={"center"}
+          alignItems={"center"}
+          w={{ base: "100%", lg: "30%" }}
+          textAlign={"center"}
+          fontSize={"2xl"}
+          transform={{ lg: "translateX(-50%)" }}
+        >
+          <AnimatePresence>
+            <MotionText
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              w="100%"
+            >
+              Featuring the latest projects, ideas and experiments
+            </MotionText>
+          </AnimatePresence>
+        </ChakraBox>
+      </ChakraFlex>
+      <ChakraFlex
+        display={"flex"}
+        w={{ base: "100%", lg: "60%" }}
+        h="80vh"
+        justifyContent="center"
+        alignItems={"center"}
+        ref={pRef}
+      >
+        <AnimateSharedLayout>
+          <ChakraFlex
+            display={"flex"}
+            layout
+            w="100%"
+            h="80%"
+            flexDir={{ base: "column", lg: "row"}}
+            gap={{ base: 20, lg: 4 }}
+            // flexWrap={{ lg: "wrap" }}
+            overflow="scroll"
+          >
+            {imgs.map((img) => (
+              <AnimatePresence key={img.id}>
+                <ProjectCard img={img} />
+              </AnimatePresence>
+            ))}
+          </ChakraFlex>
+        </AnimateSharedLayout>
+      </ChakraFlex>
+    </ChakraFlex>
   );
-};
+});
 
-const Shop = () => {
-  gsap.registerPlugin(ScrollTrigger);
-
-  const ref = useRef(null);
-  const horizontalRef = useRef(null);
-
-  useLayoutEffect(() => {
-    let element = ref.current;
-    let scrollingElement = horizontalRef.current;
-
-    let pinWrapWidth = scrollingElement.offsetWidth;
-
-    let t1 = gsap.timeline();
-
-    setTimeout(() => {
-      t1.to(element, {
-        scrollTrigger: {
-          trigger: element,
-          start: "top top",
-          end: pinWrapWidth,
-          scroller: ".App", // locomotive element
-          scrub: true,
-          pin: true,
-          // markers:true,
-        },
-        // we have to increase scrolling height of this section same as the scrolling element width
-        height: `${scrollingElement.scrollWidth}px`,
-        ease: "none,",
-      });
-
-      // Horizontal Scrolling
-      t1.to(scrollingElement, {
-        scrollTrigger: {
-          trigger: scrollingElement,
-          start: "top top",
-          end: pinWrapWidth,
-          scroller: ".App", // locomotive element
-          scrub: true,
-
-          // markers:true,
-        },
-        // we have to increase scrolling height of this section same as the scrolling element width
-        x: -pinWrapWidth,
-        ease: "none,",
-      });
-      ScrollTrigger.refresh();
-    }, 1000);
-
-    return () => {
-      // Let's clear instances
-      t1.kill();
-      // ScrollTrigger.
-      // ScrollTrigger.kill();
-      ScrollTrigger.disable(false, false)
-    };
-  }, []);
-
+const ProjectCard = ({ img }) => {
+  const setActiveRef = useStore((state) => state.setActiveRef);
+  const activeRef = useStore((state) => state.activeRef);
+  const [isOpen, setIsOpen] = useState(false);
+  const bg = useColorModeValue("white", "gray.800");
   return (
-    <Section ref={ref} id="shop">
-      <Title data-scroll data-scroll-speed="-1">
-        New Collection
-      </Title>
-      <Left>
-        <p>
-          The brand new collection is currently being developed in USA. We
-          create our products using best quality material, including the use of
-          some of the pure fabrics to make our products. All products are made
-          using the best materials, from the finest cotton to the finest
-          fabrics.
-          <br />
-          <br />
-          We have lots of different clothing options like shoes, jackets and
-          dresses. Not only clothes but we also provide unique Jewellery as
-          well. It is great for us to carry our new clothes all around the
-          country and look different.
-        </p>
-      </Left>
-      <Right ref={horizontalRef}>
-        <Product img={img1} title="Man Basics" />
-        <Product img={img2} title="Tops" />
-        <Product img={img3} title="Sweatshirts" />
-        <Product img={img4} title="Ethnic Wear" />
-        <Product img={img5} title="Blazers" />
-        <Product img={img6} title="Suits" />
-        <Product img={img7} title="Antiques" />
-        <Product img={img8} title="Jewellery" />
-        <Product img={img9} title="Watches" />
-        <Product img={img10} title="Special Edition" />
-      </Right>
-    </Section>
+    <ChakraBox
+      layout
+      cursor="pointer"
+      initial={{ opacity: 0 }}
+      animate={
+        isOpen ? { opacity: 1, width: "100%" } : { opacity: 1, width: "30%" }
+      }
+      exit={{ opacity: 0 }}
+      id={img.id}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+      onClick={() => {
+        setIsOpen(!isOpen);
+        if (isOpen) {
+          setActiveRef(undefined);
+        } else {
+          setActiveRef(img);
+        }
+      }}
+      // transition={{duration: 3}}
+    >
+      <MotionCenter w="100%" layout>
+        <ChakraBox
+          role={"group"}
+          p={6}
+          bg={bg}
+          boxShadow={"2xl"}
+          rounded={"lg"}
+          zIndex={1}
+          layout
+        >
+          <ChakraBox
+            display="flex"
+            rounded={"lg"}
+            mt={-12}
+            pos={"relative"}
+            height={"100%"}
+            layout
+          >
+            <ChakraBox
+              display="flex"
+              ref={img.ref}
+              layout
+              w="full"
+              h="full"
+            >
+              <ChakraImg
+                rounded={"lg"}
+                objectFit={"cover"}
+                src={img.src}
+                width={282}
+                height={230}
+              />
+              <AnimatePresence>{isOpen && <Content />}</AnimatePresence>
+            </ChakraBox>
+          </ChakraBox>
+        </ChakraBox>
+      </MotionCenter>
+    </ChakraBox>
   );
 };
-
-export default Shop;
+function Content() {
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <div className="row" />
+      <div className="row" />
+      <div className="row" />
+    </motion.div>
+  );
+}
+export default Projects;
