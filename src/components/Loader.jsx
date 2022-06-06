@@ -30,15 +30,15 @@ const Loader = () => {
       top={0}
       left={0}
       w="100%"
-      h="100%"
-      //   pointerEvents={"none"}
+      h="100vh"
+      pointerEvents={"none"}
       overflow="hidden"
       initial={{
         y: 0,
         opacity: 1,
       }}
       exit={{
-        y: "100%",
+        y: "-100%",
         opacity: 0,
       }}
       transition={{
@@ -55,7 +55,9 @@ const Loader = () => {
         flexWrap={"wrap"}
       >
         <Stack direction={"column"} justify="center" align={"center"}>
-          <Turtle />
+          <Box transform={"rotate(279deg)"}>
+            <Turtle />
+          </Box>
           <MotionHeading
             variants={textVariants}
             initial="hidden"

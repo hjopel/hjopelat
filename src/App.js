@@ -15,17 +15,13 @@ import CTASection from "./components/CTASection";
 import { useRoute } from "wouter";
 import Footer from "./components/Footer";
 import * as THREE from "three";
-import {
-  LocomotiveScrollProvider,
-  useLocomotiveScroll,
-} from "react-locomotive-scroll";
-import "locomotive-scroll/dist/locomotive-scroll.css";
+
 import LoadingOverlay from "./components/Loader";
 import { ChakraFlex } from "./components/AnimatedComponents";
 import { AnimatePresence } from "framer-motion";
 // import * as oida from "framer-motion/three"
 function App() {
-  const [ref, view1, projectView, view3, view4, view5, scrollRef] = useRefs();
+  const [ref, hero, project, view3, view4, view5, scrollRef] = useRefs();
   const [loading, setIsLoading] = useState(true);
   useEffect(() => {
     gsap.timeline().to(".lateReveal", {
@@ -38,153 +34,74 @@ function App() {
 
   const activeRef = useStore((state) => state.activeRef);
 
-  const [matchesLandingPage] = useRoute("/");
-
-  const setImgs = useStore((state) => state.setImgs);
-  const imgs = [
-    {
-      src: "/ss.png",
-      category: "website",
-      txtr: new THREE.TextureLoader().load("/ss.png"),
-      id: "hjopel",
-      title: "hjopel.at",
-      tags: ["react", "webgl", "three.js"],
-      ref: useRef(),
-      width: 1920,
-      height: 1080,
-    },
-    {
-      src: "/florist.png",
-      category: "mockup",
-      id: "florist",
-      txtr: new THREE.TextureLoader().load("/florist.png"),
-
-      title: "florist",
-      tags: ["react", "webgl", "three.js", "prototype"],
-      ref: useRef(),
-      width: 1920,
-      height: 1080,
-    },
-    {
-      src: "/naturjuwelgaas.png",
-      category: "website",
-      txtr: new THREE.TextureLoader().load("/naturjuwelgaas.png"),
-
-      id: "naturjuwel",
-      title: "naturjuwel",
-      tags: ["wordpress", "smoobu"],
-      ref: useRef(),
-      width: 1920,
-      height: 1080,
-    },
-    {
-      src: "/lp_admissio.png",
-      category: "application",
-      txtr: new THREE.TextureLoader().load("/lp_admissio.png"),
-
-      id: "admissio",
-      title: "admissio",
-      tags: ["angular", "node.js", "fullstack"],
-      ref: useRef(),
-      width: 2021,
-      height: 2475,
-    },
-    {
-      src: "/lp_hgoe.png",
-      category: "application",
-      txtr: new THREE.TextureLoader().load("/lp_hgoe.png"),
-
-      id: "hgoe",
-      title: "hgoe-burgenland",
-      tags: ["angular", "wp", "node.js", "fullstack"],
-      ref: useRef(),
-      width: 1287,
-      height: 2012,
-    },
-  ];
-  setImgs(imgs);
   const geometry = useMemo(() => {
     return <planeBufferGeometry args={[1, 1, 1000, 1000]} />;
   });
 
-  const renderImageViews = useMemo(() => {
-    if (activeRef) {
-      return (
-        <View track={activeRef.ref}>
-          <ProjectScene img={activeRef} geom={geometry} />{" "}
-        </View>
-      );
-    } else {
-      return imgs.map((img) => (
-        <View track={img.ref} key={img.id}>
-          <ProjectScene img={img} geom={geometry} />{" "}
-        </View>
-      ));
-    }
-  }, [activeRef, imgs]);
+  // const renderImageViews = useMemo(() => {
+  //   if (activeRef) {
+  //     return (
+  //       <View track={activeRef.ref}>
+  //         <ProjectScene img={activeRef} geom={geometry} />{" "}
+  //       </View>
+  //     );
+  //   } else {
+  //     return imgs.map((img) => (
+  //       <View track={img.ref} key={img.id}>
+  //         <ProjectScene img={img} geom={geometry} />{" "}
+  //       </View>
+  //     ));
+  //   }
+  // }, [activeRef, imgs]);
 
   return (
     <>
-      <LocomotiveScrollProvider
-        options={{
-          smooth: true,
-          // ... all available Locomotive Scroll instance options
-          smartphone: {
-            smooth: true,
-          },
-          tablet: {
-            smooth: true,
-          },
-        }}
-        containerRef={scrollRef}
+      <AnimatePresence>{loading && <LoadingOverlay />}</AnimatePresence>
+      <ChakraFlex
+        w="100%"
+        position={"absolute"}
+        top={0}
+        left={0}
+        zIndex={1000}
+        px={{ base: 0, lg: 20 }}
+        py={{ base: 0, lg: 10 }}
       >
-        <AnimatePresence>{loading && <LoadingOverlay />}</AnimatePresence>
-        <main data-scroll-container ref={scrollRef}>
-          <ChakraFlex
-            w="100%"
-            position={"absolute"}
-            top={0}
-            left={0}
-            zIndex={1000}
-            px={{ base: 0, lg: 20 }}
-            py={{ base: 0, lg: 10 }}
+        <Header />
+      </ChakraFlex>
+      <ChakraFlex
+        ref={ref}
+        className="container"
+        bgColor={useColorModeValue("light.bg", "dark.bg")}
+        justifyContent="center"
+        alignItems={"center"}
+        display="flex"
+      >
+        <ChakraFlex w="100%" h="100%" layout>
+          <Hero view={hero} />
+          <CTASection />
+
+          <Projects ref={project} />
+          <Footer />
+
+          <Canvas
+            onCreated={(state) => state.events.connect(ref.current)}
+            className="canvas"
+            id="canvasEl"
           >
-            <Header />
-          </ChakraFlex>
-          <ChakraFlex
-            ref={ref}
-            className="container"
-            bgColor={useColorModeValue("light.bg", "dark.bg")}
-            justifyContent="center"
-            alignItems={"center"}
-            display="flex"
-          >
-            <ChakraFlex w="100%" h="100%" layout>
-              <Hero view={view1} />
-              <CTASection />
-
-              <Projects ref={view3} />
-              <Footer />
-
-              <Canvas
-                onCreated={(state) => state.events.connect(ref.current)}
-                className="canvas"
-                id="canvasEl"
-              >
-                <Suspense fallback={null}>
-                  <View track={view1}>
-                    <Scene />
-                  </View>
-
-                  {/* {renderImageViews} */}
-                  <Preload all />
-                </Suspense>
-              </Canvas>
-              {/* <Loader /> */}
-            </ChakraFlex>
-          </ChakraFlex>
-        </main>
-      </LocomotiveScrollProvider>
+            <Suspense fallback={null}>
+              <View track={hero}>
+                <Scene />
+              </View>
+              <View track={project}>
+                <ProjectScene />
+              </View>
+              {/* {renderImageViews} */}
+              <Preload all />
+            </Suspense>
+          </Canvas>
+          {/* <Loader /> */}
+        </ChakraFlex>
+      </ChakraFlex>
     </>
   );
 }
