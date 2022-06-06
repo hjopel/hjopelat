@@ -17,8 +17,7 @@ import {
   Stack,
   Heading,
 } from "@chakra-ui/react";
-import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
-import { useLocation } from "wouter";
+// import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
 import useStore from "./customHooks/useStore";
 const Links = ["About", "Projects", "Contact"];
 
@@ -32,7 +31,6 @@ const NavLink = ({ children }) => (
 
 export default function WithAction() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [location, setLocation] = useLocation();
   const setActiveRef = useStore((state) => state.setActiveRef);
   return (
     <>
@@ -45,7 +43,7 @@ export default function WithAction() {
         >
           <IconButton
             size={"md"}
-            icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+            // icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
             aria-label={"Open Menu"}
             display={{ md: "none" }}
             onClick={isOpen ? onClose : onOpen}

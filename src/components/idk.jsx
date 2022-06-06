@@ -3,7 +3,6 @@ import * as THREE from "three";
 import { shaderMaterial, useAspect } from "@react-three/drei";
 import { extend, useFrame, useThree } from "@react-three/fiber";
 import glsl from "babel-plugin-glsl/macro";
-import { useColorModePreference, useColorModeValue } from "@chakra-ui/react";
 
 const VideoWobbleMaterial = shaderMaterial(
   {

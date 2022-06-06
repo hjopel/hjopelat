@@ -44,7 +44,6 @@ const Loader = () => {
       transition={{
         duration: 2,
       }}
-      id="loader"
     >
       <Flex
         w="100%"
@@ -60,7 +59,8 @@ const Loader = () => {
             variants={textVariants}
             initial="hidden"
             animate="visible"
-            fontWeight="thin"
+            fontWeight={"100"}
+            color="rgba(12, 12, 12, 0.69)"
           >
             save the turtles
           </MotionHeading>

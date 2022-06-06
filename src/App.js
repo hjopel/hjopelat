@@ -1,28 +1,25 @@
 import "./App.css";
-import { Box, useColorModeValue, Flex, Text, chakra } from "@chakra-ui/react";
 import useRefs from "react-use-refs";
 import { Canvas, extend } from "@react-three/fiber";
 import { Suspense, useEffect, useState, useRef, useMemo } from "react";
 import { View, Preload, Loader } from "@react-three/drei";
-import Header from "./components/Header";
 import Projects from "./components/Projects";
-import ProjectScene from "./components/ProjectScene";
+// import ProjectScene from "./components/ProjectScene";
 import gsap from "gsap";
 import useStore from "./components/customHooks/useStore";
 import Hero from "./components/Hero";
 import Scene from "./components/idk";
-import CTASection from "./components/CTASection";
-import { useRoute } from "wouter";
-import Footer from "./components/Footer";
+// import CTASection from "./components/CTASection";
+// import Footer from "./components/Footer";
 import * as THREE from "three";
 import {
   LocomotiveScrollProvider,
   useLocomotiveScroll,
 } from "react-locomotive-scroll";
 import "locomotive-scroll/dist/locomotive-scroll.css";
-import LoadingOverlay from "./components/Loader";
-import { ChakraFlex } from "./components/AnimatedComponents";
+// import LoadingOverlay from "./components/Loader";
 import { AnimatePresence } from "framer-motion";
+import ScrollTriggerProxy from "./ScrollTriggerProxy";
 // import * as oida from "framer-motion/three"
 function App() {
   const [ref, view1, projectView, view3, view4, view5, scrollRef] = useRefs();
@@ -38,7 +35,6 @@ function App() {
 
   const activeRef = useStore((state) => state.activeRef);
 
-  const [matchesLandingPage] = useRoute("/");
 
   const setImgs = useStore((state) => state.setImgs);
   const imgs = [
@@ -107,21 +103,21 @@ function App() {
     return <planeBufferGeometry args={[1, 1, 1000, 1000]} />;
   });
 
-  const renderImageViews = useMemo(() => {
-    if (activeRef) {
-      return (
-        <View track={activeRef.ref}>
-          <ProjectScene img={activeRef} geom={geometry} />{" "}
-        </View>
-      );
-    } else {
-      return imgs.map((img) => (
-        <View track={img.ref} key={img.id}>
-          <ProjectScene img={img} geom={geometry} />{" "}
-        </View>
-      ));
-    }
-  }, [activeRef, imgs]);
+  // const renderImageViews = useMemo(() => {
+  //   if (activeRef) {
+  //     return (
+  //       <View track={activeRef.ref}>
+  //         <ProjectScene img={activeRef} geom={geometry} />{" "}
+  //       </View>
+  //     );
+  //   } else {
+  //     return imgs.map((img) => (
+  //       <View track={img.ref} key={img.id}>
+  //         <ProjectScene img={img} geom={geometry} />{" "}
+  //       </View>
+  //     ));
+  //   }
+  // }, [activeRef, imgs]);
 
   return (
     <>
@@ -138,51 +134,51 @@ function App() {
         }}
         containerRef={scrollRef}
       >
-        <AnimatePresence>{loading && <LoadingOverlay />}</AnimatePresence>
-        <main data-scroll-container ref={scrollRef}>
-          <ChakraFlex
-            w="100%"
-            position={"absolute"}
-            top={0}
-            left={0}
-            zIndex={1000}
-            px={{ base: 0, lg: 20 }}
-            py={{ base: 0, lg: 10 }}
-          >
-            <Header />
-          </ChakraFlex>
-          <ChakraFlex
+        {/* <AnimatePresence>{loading && <LoadingOverlay />}</AnimatePresence> */}
+        {/* <ChakraFlex
+          w="100%"
+          position={"absolute"}
+          top={0}
+          left={0}
+          zIndex={1000}
+          px={{ base: 0, lg: 20 }}
+          py={{ base: 0, lg: 10 }}
+        >
+          <Header />
+        </ChakraFlex> */}
+        <ScrollTriggerProxy />
+        <main data-scroll-container ref={scrollRef} className="App">
+          {/* <ChakraFlex
             ref={ref}
             className="container"
             bgColor={useColorModeValue("light.bg", "dark.bg")}
             justifyContent="center"
             alignItems={"center"}
             display="flex"
-          >
-            <ChakraFlex w="100%" h="100%" layout>
-              <Hero view={view1} />
-              <CTASection />
+            w="100%"
+            h="100%"
+          > */}
+            {/* <ChakraFlex w="100%" h="100%" layout data-scroll-section> */}
+            <Hero view={view1} />
 
-              <Projects ref={view3} />
-              <Footer />
+            <Projects  />
+            {/* <Footer /> */}
 
-              <Canvas
-                onCreated={(state) => state.events.connect(ref.current)}
-                className="canvas"
-                id="canvasEl"
-              >
-                <Suspense fallback={null}>
-                  <View track={view1}>
+            <Canvas
+              onCreated={(state) => state.events.connect(ref.current)}
+              className="canvas"
+              id="canvasEl"
+            >
+              <Suspense fallback={null}>
+                {/* <View track={view1}>
                     <Scene />
-                  </View>
+                  </View> */}
 
-                  {/* {renderImageViews} */}
-                  <Preload all />
-                </Suspense>
-              </Canvas>
-              {/* <Loader /> */}
-            </ChakraFlex>
-          </ChakraFlex>
+                <Preload all />
+              </Suspense>
+            </Canvas>
+          {/* </ChakraFlex> */}
+          {/* </ChakraFlex> */}
         </main>
       </LocomotiveScrollProvider>
     </>
